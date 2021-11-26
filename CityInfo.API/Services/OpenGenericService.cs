@@ -7,17 +7,17 @@ namespace CityInfo.API.Services
     //T can be GuidAttribute, or...
     public interface IOpenGenericService<T>
     {
-        Task<T?> GetAsync();
+        Task<T> GetAsync();
     }
 
-    public class OpenGenericService<T> : IOpenGenericService<T?>
+    public class OpenGenericService<T> : IOpenGenericService<T>
     {
-        public Task<T?> GetAsync()
+        public Task<T> GetAsync()
         {
             return Task.Run(Get);
         }
 
-        private static T? Get()
+        private static T Get()
         {
             var assembly = Assembly.GetExecutingAssembly();
             var attributes = assembly.GetCustomAttributes(typeof(T), true);
