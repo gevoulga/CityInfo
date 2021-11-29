@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using CityInfo.API.Contexts;
 using CityInfo.API.Options;
 using CityInfo.API.Services;
 using CityInfo.API.Validations;
@@ -12,6 +13,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -37,7 +39,7 @@ namespace CityInfo.API
             services.AddOptions<MailServerOptions>()
                 .Bind(Configuration.GetSection(MailServerOptions.Section))
                 .ValidateDataAnnotations();
-            
+
             services
                 .AddControllers(
                     options => { options.SuppressAsyncSuffixInActionNames = false; }
@@ -66,6 +68,17 @@ namespace CityInfo.API
 #else
             services.AddTransient<IMailService, CloudMailService>();
 #endif
+
+            //Connect to DB
+            services.AddDbContext<CityInfoContext>(builder =>
+            {
+                builder.UseSqlServer(Configuration["Database:ConnectionString"]);
+            });
+            //Add the repository service
+            services.AddScoped<ICityInfoRepository, CityInfoRepository>();
+
+            //Automapper
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -84,6 +97,13 @@ namespace CityInfo.API
                 // .UseAuthorization()
                 .UseEndpoints(endpoints => { endpoints.MapControllers(); })
                 .UseStatusCodePages();
+
+            //Validate that the DB has been created, after application has started up!
+            using (var serviceScope = app.ApplicationServices.CreateScope())
+            {
+                serviceScope.ServiceProvider
+                    .GetRequiredService<CityInfoContext>();
+            }
         }
     }
 }

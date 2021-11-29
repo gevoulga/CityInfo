@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using CityInfo.API.Entities;
 using CityInfo.API.Models;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,9 @@ namespace CityInfo.API.Contexts
     {
         public CityInfoContext(DbContextOptions options) : base(options)
         {
-            // Database.EnsureCreated();
+            Database.EnsureCreated();
+            var canConnect = Database.CanConnect();
+            Debug.WriteLine($"Can connect {canConnect}");
             // options.
         }
 
