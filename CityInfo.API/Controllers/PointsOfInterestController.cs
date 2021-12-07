@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using CityInfo.API.Entities;
 using CityInfo.API.Models;
@@ -46,6 +47,7 @@ namespace CityInfo.API.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [ActionName(nameof(GetPointOfInterest))]
         public IActionResult GetPointOfInterest(int cityId, int id)
         {
             var poi = _repository.GetPointOfInterestForCity(cityId, id);
@@ -61,7 +63,7 @@ namespace CityInfo.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreatePointOfInterest(int cityId, PointOfInterestForCreationDto pointOfInterest)
+        public async Task<IActionResult> CreatePointOfInterest(int cityId, PointOfInterestForCreationDto pointOfInterest)
         {
             // if (pointOfInterest.Description == pointOfInterest.Name)
             // {
@@ -71,12 +73,12 @@ namespace CityInfo.API.Controllers
             //     return BadRequest(ModelState);
             // }
 
-            var city = _repository.GetCity(cityId);
+            var city = await _repository.GetCityAsync(cityId);
             if (city is null)
                 return NotFound();
 
             var poi = _mapper.Map<PointOfInterest>(pointOfInterest);
-            _repository.AddPointOfInterestForCity(cityId, poi);
+            await _repository.AddPointsOfInterestForCity(cityId, poi);
             var savedPoi = _mapper.Map<PointOfInterestDto>(poi);
 
             //TODO: why the hell is this not working?
@@ -88,30 +90,30 @@ namespace CityInfo.API.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public IActionResult UpdatePointOfInterest(int cityId, int id, PointOfInterestForCreationDto pointOfInterest)
+        public async Task<IActionResult> UpdatePointOfInterest(int cityId, int id, PointOfInterestForCreationDto pointOfInterest)
         {
-            var city = _repository.GetCity(cityId);
+            var city = await _repository.GetCityAsync(cityId);
             if (city is null)
                 return NotFound();
-            var poi = _repository.GetPointOfInterestForCity(cityId, id);
+            var poi = await _repository.GetPointOfInterestForCity(cityId, id);
             if (poi is null)
                 return NotFound();
 
             //Automapper will do the update!
             _mapper.Map(pointOfInterest, poi);
-            _repository.UpdatePointOfInterestForCity(cityId, poi);
+            await _repository.UpdatePointOfInterestForCity(cityId, poi);
 
             return NoContent();
         }
 
         [HttpPatch("{id:int}")]
-        public IActionResult PartiallyUpdatePointOfInterest(int cityId, int id,
+        public async Task<IActionResult> PartiallyUpdatePointOfInterest(int cityId, int id,
             JsonPatchDocument<PointOfInterestForCreationDto> patchDoc)
         {
-            var city = _repository.GetCity(cityId);
+            var city = await _repository.GetCityAsync(cityId);
             if (city is null)
                 return NotFound();
-            var poi = _repository.GetPointOfInterestForCity(cityId, id);
+            var poi = await _repository.GetPointOfInterestForCity(cityId, id);
             if (poi is null)
                 return NotFound();
 
@@ -126,23 +128,23 @@ namespace CityInfo.API.Controllers
 
             //Automapper will do the partial update update!
             _mapper.Map(pointOfInterestToPatch, poi);
-            _repository.UpdatePointOfInterestForCity(cityId, poi);
+            await _repository.UpdatePointOfInterestForCity(cityId, poi);
 
             return NoContent();
         }
 
         [HttpDelete("int:id")]
-        public IActionResult DeletePointOfInterest(int cityId, int id)
+        public async Task<IActionResult> DeletePointOfInterest(int cityId, int id)
         {
-            var city = _repository.GetCity(cityId);
+            var city = await _repository.GetCityAsync(cityId);
             if (city is null)
                 return NotFound();
-            var poi = _repository.GetPointOfInterestForCity(cityId,id);
+            var poi = await _repository.GetPointOfInterestForCity(cityId,id);
             if (poi is null)
                 return NotFound();
 
             city.PointsOfInterest.Remove(poi);
-            _repository.DeletePointOfInterest(poi);
+            await _repository.DeletePointOfInterest(poi);
             _mailService.Send("Point of Service Deleted",
                 $"Point of interest {poi} has been deleted.");
             return NoContent();

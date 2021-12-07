@@ -9,6 +9,8 @@ namespace CityInfo.API.Profiles
         {
             CreateMap<Entities.PointOfInterest, Models.PointOfInterestDto>();
             CreateMap<Models.PointOfInterestForCreationDto, Entities.PointOfInterest>()
+                // .ForMember(dest => dest.Name,
+                //     expression => expression.MapFrom(src=>src.Name.ToUpper()))
                 .ReverseMap();
         }
     }

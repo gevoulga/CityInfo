@@ -6,15 +6,8 @@ using NLog.Web;
 
 namespace CityInfo.API
 {
-    public class Program
+    public partial class Program
     {
-        public static void Main(string[] args)
-        {
-            // Logger logger = NLogBuilder.ConfigureNLog("nlog.config")
-            //     .GetCurrentClassLogger();
-            CreateHostBuilder(args).Build().Run();
-        }
-
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
@@ -26,7 +19,7 @@ namespace CityInfo.API
                         //     builder.AddL
                         // })
                         .UseContentRoot(Directory.GetCurrentDirectory() + @"\Configuration")
-                        
+
                         //This is not necessary cuz by setting content root the settings are scanned!
                         // .ConfigureAppConfiguration((hostingContext, config) =>
                         // {

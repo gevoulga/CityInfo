@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using CityInfo.API.Entities;
 
 namespace CityInfo.API.Services
@@ -7,15 +8,15 @@ namespace CityInfo.API.Services
     {
         IQueryable<City> GetCities();
 
-        City GetCity(int cityId, bool includePoi = false);
+        Task<City> GetCityAsync(int cityId, bool includePoi = false);
 
         IQueryable<PointOfInterest> GetPointsOfInterestForCity(int cityId);
 
-        PointOfInterest GetPointOfInterestForCity(int cityId, int pointOfInterestId);
+        Task<PointOfInterest> GetPointOfInterestForCity(int cityId, int pointOfInterestId);
 
-        public void AddPointOfInterestForCity(int cityId, PointOfInterest poi);
+        Task AddPointsOfInterestForCity(int cityId, params PointOfInterest[] poi);
 
-        public void UpdatePointOfInterestForCity(int cityId, PointOfInterest poi);
-        void DeletePointOfInterest(PointOfInterest poi);
+        Task UpdatePointOfInterestForCity(int cityId, PointOfInterest poi);
+        Task DeletePointOfInterest(PointOfInterest poi);
     }
 }

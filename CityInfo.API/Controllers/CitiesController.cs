@@ -32,7 +32,7 @@ namespace CityInfo.API.Controllers
         [HttpGet("{id:int}")]
         public IActionResult GetCity(int id, bool includePoi = false)
         {
-            var city = _repository.GetCity(id, includePoi);
+            var city = _repository.GetCityAsync(id, includePoi);
             if (city is null)
                 return NotFound();
 

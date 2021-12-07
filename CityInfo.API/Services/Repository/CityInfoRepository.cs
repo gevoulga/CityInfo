@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using CityInfo.API.Contexts;
 using CityInfo.API.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CityInfo.API.Services
 {
-    public class CityInfoRepository : ICityInfoRepository
+    public class CityInfoRepository : ICityInfoRepository, IDisposable
     {
         private readonly ILogger<CityInfoRepository> _logger;
         private readonly CityInfoContext _context;
@@ -24,16 +26,17 @@ namespace CityInfo.API.Services
             return _context.Cities.OrderBy(city => city.Name);
         }
 
-        public City GetCity(int cityId, bool includePoi = false)
+        public async Task<City> GetCityAsync(int cityId, bool includePoi = false)
         {
             if (includePoi)
             {
-                return _context.Cities.Include(city => city.PointsOfInterest)
-                    .FirstOrDefault(city => city.Id == cityId);
+                return await _context.Cities
+                    .Include(city => city.PointsOfInterest)
+                    .FirstOrDefaultAsync(city => city.Id == cityId);
             }
 
-            return _context.Cities
-                .FirstOrDefault(city => city.Id == cityId);
+            return await _context.Cities
+                .FirstOrDefaultAsync(city => city.Id == cityId);
         }
 
         public IQueryable<PointOfInterest> GetPointsOfInterestForCity(int cityId)
@@ -42,34 +45,38 @@ namespace CityInfo.API.Services
                 .Where(poi => poi.CityId == cityId);
         }
 
-        public PointOfInterest GetPointOfInterestForCity(int cityId, int pointOfInterestId)
+        public async Task<PointOfInterest> GetPointOfInterestForCity(int cityId, int pointOfInterestId)
         {
-            return _context.PointOfInterests
-                .FirstOrDefault(poi => poi.CityId == cityId && poi.Id == pointOfInterestId);
+            return await _context.PointOfInterests
+                .FirstOrDefaultAsync(poi => poi.CityId == cityId && poi.Id == pointOfInterestId);
         }
 
-        public void AddPointOfInterestForCity(int cityId, PointOfInterest poi)
+        public async Task AddPointsOfInterestForCity(int cityId, params PointOfInterest[] poi)
         {
-            var city = GetCity(cityId);
-            city.PointsOfInterest.Add(poi);
-            Save();
+            var city = await GetCityAsync(cityId);
+            foreach (var pointOfInterest in poi)
+            {
+                city.PointsOfInterest.Add(pointOfInterest);
+            }
+
+            await Save();
         }
 
-        public void UpdatePointOfInterestForCity(int cityId, PointOfInterest poi)
+        public async Task UpdatePointOfInterestForCity(int cityId, PointOfInterest poi)
         {
             //PointOfInterest is a tracked object by entity framework, so we only need to Save the changes in the repo!
-            Save();
+            await Save();
         }
 
-        public void DeletePointOfInterest(PointOfInterest poi)
+        public async Task DeletePointOfInterest(PointOfInterest poi)
         {
             _context.PointOfInterests.Remove(poi);
-            Save();
+            await Save();
         }
 
-        private void Save()
+        private async Task Save()
         {
-            var savedChanges = _context.SaveChanges();
+            var savedChanges = await _context.SaveChangesAsync();
             if (savedChanges > 0)
             {
                 _logger.LogDebug("Saved {} changed in DB {}", savedChanges, _context);
@@ -78,6 +85,11 @@ namespace CityInfo.API.Services
             {
                 _logger.LogWarning("No changes saved in DB {}", _context);
             }
+        }
+
+        public void Dispose()
+        {
+            _context.Dispose();
         }
     }
 }

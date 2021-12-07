@@ -49,13 +49,13 @@ namespace CityInfo.API
                 {
                     fv.RegisterValidatorsFromAssemblyContaining<PointOfInterestValidator>();
                     fv.ImplicitlyValidateChildProperties = true;
-                })
+                });
                 // .AddJsonOptions(jsonOptions =>
                 // {
                 //     jsonOptions.JsonSerializerOptions.PropertyNamingPolicy =JsonNamingPolicy.CamelCase;
                 //     jsonOptions.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
                 // });
-                .AddNewtonsoftJson();
+                // .AddNewtonsoftJson();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "CityInfo.API", Version = "v1"});
