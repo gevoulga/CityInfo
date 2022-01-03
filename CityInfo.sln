@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CityInfo.API", "CityInfo.AP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CityInfo.API.Test", "CityInfo.API.Test\CityInfo.API.Test.csproj", "{0C0313E6-34D9-4CCC-85CB-0E9FF72389E6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CityInfo.Chat", "CityInfo.Chat\CityInfo.Chat.csproj", "{3DEC613D-A32A-4E9A-9111-F33F3B91392B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{0C0313E6-34D9-4CCC-85CB-0E9FF72389E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C0313E6-34D9-4CCC-85CB-0E9FF72389E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C0313E6-34D9-4CCC-85CB-0E9FF72389E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DEC613D-A32A-4E9A-9111-F33F3B91392B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DEC613D-A32A-4E9A-9111-F33F3B91392B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DEC613D-A32A-4E9A-9111-F33F3B91392B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DEC613D-A32A-4E9A-9111-F33F3B91392B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -39,8 +39,13 @@ namespace CityInfo.API.Controllers
             var httpClient = application.CreateClient();
             // using HttpClient httpClient = new();
 
-            testContext.WriteLine($"[{DateTime.UtcNow:hh:mm:ss.fff}] Receving weather forecasts . . .");
 
+            await httpAsStream(httpClient);
+        }
+
+        private async Task httpAsStream(HttpClient? httpClient)
+        {
+            testContext.WriteLine($"[{DateTime.UtcNow:hh:mm:ss.fff}] Receving weather forecasts . . .");
 
             using HttpResponseMessage response = await httpClient.GetAsync(
                 "/api/LoremIpsum",
@@ -56,11 +61,12 @@ namespace CityInfo.API.Controllers
             var responseStream = await response.Content
                 .ReadAsStreamAsync()
                 .ConfigureAwait(false);
+
             IAsyncEnumerable<string> words = JsonSerializer.DeserializeAsyncEnumerable<string>(responseStream,
                 new JsonSerializerOptions()
                 {
                     PropertyNameCaseInsensitive = true,
-                    DefaultBufferSize = 16 //Use a small number otherwise the entire response will be returned at one!
+                    DefaultBufferSize = 8 //Use a small number otherwise the entire response will be returned at one!
                 });
 
             await foreach (var word in words)
