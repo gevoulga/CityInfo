@@ -3,6 +3,8 @@ using NUnit.Framework;
 namespace CityInfo.Chat.Test;
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Threading;
@@ -14,45 +16,39 @@ public class Tests
     public static void TestFixtureSetup()
     {
     }
-    
+
     [SetUp]
     public void Setup()
     {
     }
 
     [Test]
-    public async Task RxTaskParallelismTest()
+    public async Task RxIAsyncEnumerable()
     {
-        await Observable.Range(1, 10)
-            .Select(i => Observable.Defer(() =>
-            {
-                return TaskCreator(i).ToObservable();
-            }))
-            //Executed out-of-order tasks
-            .Merge(3) //If no args, no max-parallelism is specified. 
-            //.Concat() //Concat will execute the stream in-order
-            //.Do(x => TestContext.Progress.WriteLine($"{x} concatenated"))
+        var received = await generate().ToObservable()
+            .Take(5)
             .RunAsync(CancellationToken.None);
-        // .ForEachAsync(i => TestContext.Progress.WriteLine($"[{DateTime.UtcNow:hh:mm:ss.fff}] Got {i}"));
-        
-        //Printed at the end of the run
-        TestContext.Out.WriteLine("at the end");
-        // Immediately display error
-        TestContext.Error.WriteLine("immediate error");
-        // Immedaitely display message
-        TestContext.Progress.WriteLine("immediate text");
+        TestContext.Progress.WriteLine($"received in the end {received}");
+
+        var enums = generate();
+        enums.ToObservable()
+            .Take(5)
+            .Subscribe(i => TestContext.Progress.WriteLine($"#1Got {i}"));
+        await Task.Delay(TimeSpan.FromSeconds(2));
+        enums.ToObservable()
+            .Take(5)
+            .Subscribe(i => TestContext.Progress.WriteLine($"#2Got {i}"));
+        await Task.Delay(TimeSpan.FromSeconds(10));
     }
 
-    private Task<int> TaskCreator(int i)
+    private async IAsyncEnumerable<int> generate()
     {
-        return Task.Run(async () =>
+        for (int i = 0; i < 100; i++)
         {
-            TestContext.Progress.WriteLine($"[{DateTime.UtcNow:hh:mm:ss.fff}] Task{i}: Started {new string('.', i)}");
-            await Task.Delay(TimeSpan.FromSeconds(i));
-            //Thread.Sleep(TimeSpan.FromSeconds(i));
-            TestContext.Progress.WriteLine($"[{DateTime.UtcNow:hh:mm:ss.fff}] Task{i}: Complete {new string('.', i)}");
+            await Task.Delay(500);
+            TestContext.Progress.WriteLine($"sending {i}");
 
-            return i;
-        });
+            yield return i;
+        }
     }
 }
