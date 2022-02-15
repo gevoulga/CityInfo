@@ -1,5 +1,4 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 
 namespace CityInfo.API.Profiles
 {

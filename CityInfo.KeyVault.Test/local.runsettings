@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+    <TestRunParameters>
+        <!-- Settings for KeyVault -->
+        <Parameter name="KeyVaultUrl" value="...." />
+        
+        <!--  <Parameter name="KeyVaultUrl" value="....." /> -->
+        <!--  <Parameter name="KeyVaultTenantId" value="....."/> -->
+        <!--  <Parameter name="ClientId" value="....."/> -->
+        <!--  <Parameter name="CN" value="...." /> -->
+    </TestRunParameters>
+</RunSettings>

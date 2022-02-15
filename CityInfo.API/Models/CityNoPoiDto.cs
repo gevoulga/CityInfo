@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace CityInfo.API.Models
+﻿namespace CityInfo.API.Models
 {
     public class CityNoPoiDto
     {

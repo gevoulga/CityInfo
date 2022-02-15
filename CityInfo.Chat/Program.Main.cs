@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Hosting;
-
 namespace CityInfo.Parking
 {
     public partial class Program

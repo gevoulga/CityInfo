@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CityInfo.Chat", "CityInfo.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CityInfo.Chat.Test", "CityInfo.Chat.Test\CityInfo.Chat.Test.csproj", "{FB654A54-FA82-472C-A3A9-DCB386AC442A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CityInfo.KeyVault.Test", "CityInfo.KeyVault.Test\CityInfo.KeyVault.Test.csproj", "{48ABC1E7-A791-4056-BEF1-048CF141AC8F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{FB654A54-FA82-472C-A3A9-DCB386AC442A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB654A54-FA82-472C-A3A9-DCB386AC442A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB654A54-FA82-472C-A3A9-DCB386AC442A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48ABC1E7-A791-4056-BEF1-048CF141AC8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48ABC1E7-A791-4056-BEF1-048CF141AC8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48ABC1E7-A791-4056-BEF1-048CF141AC8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48ABC1E7-A791-4056-BEF1-048CF141AC8F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using CityInfo.API.Entities;
-using CityInfo.API.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace CityInfo.API.Contexts
