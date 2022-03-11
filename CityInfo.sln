@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CityInfo.Chat.Test", "CityI
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CityInfo.KeyVault.Test", "CityInfo.KeyVault.Test\CityInfo.KeyVault.Test.csproj", "{48ABC1E7-A791-4056-BEF1-048CF141AC8F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarvedRock.API", "CarvedRock.API\CarvedRock.API.csproj", "{AD0D6361-C1D6-459D-BCE9-68C6CEEC60AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{48ABC1E7-A791-4056-BEF1-048CF141AC8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{48ABC1E7-A791-4056-BEF1-048CF141AC8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{48ABC1E7-A791-4056-BEF1-048CF141AC8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD0D6361-C1D6-459D-BCE9-68C6CEEC60AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD0D6361-C1D6-459D-BCE9-68C6CEEC60AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD0D6361-C1D6-459D-BCE9-68C6CEEC60AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD0D6361-C1D6-459D-BCE9-68C6CEEC60AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
