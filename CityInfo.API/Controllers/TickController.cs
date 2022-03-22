@@ -46,6 +46,20 @@ namespace CityInfo.API.Controllers
                 .Merge(3) //If no args, no max-parallelism is specified. 
                 //.Concat() //Concat will execute the stream in-order
                 .Do(x => Console.WriteLine($"{x} concatenated"));
+            
+            
+            // Observable.Range(0, 10)
+            //     .SelectMany(i => Observable.FromAsync(() => createTask(i))
+            //         .Merge(5)
+            //     )
+            // Observable.FromAsync(() => return Task.)
+            //
+            // var xs = Observable.Range(0, 10); // source events
+            // xs.Select(x =>
+            //         Observable.Defer(() => Double(x).ToObservable()))
+            //     .Merge(3)
+            //     .Subscribe(Console.WriteLine,
+            //         () => Console.WriteLine("Max: " + MaxConcurrent));
         }
 
         private Task<int> TaskCreator(int i)

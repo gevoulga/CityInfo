@@ -8,7 +8,7 @@ namespace CarvedRock.Api.Data
         public CarvedRockDbContext(DbContextOptions<CarvedRockDbContext> options): base(options)
         {
         }
-        public DbSet<Product> Products { get; set; }
+        public DbSet<BaseProduct> Products { get; set; }
         public DbSet<ProductReview> ProductReviews { get; set; }
     }
 }

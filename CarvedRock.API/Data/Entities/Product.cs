@@ -5,15 +5,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CarvedRock.Api.Data.Entities
 {
-    public class Product
+    public class Product : BaseProduct
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
-        [StringLength(100)]
-        public string Name { get; set; }
-        public ProductType Type { get; set; }
+        public ProductTypeEnum Type { get; set; }
         public string Description { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]

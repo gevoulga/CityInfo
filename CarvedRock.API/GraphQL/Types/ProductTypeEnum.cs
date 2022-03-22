@@ -2,7 +2,7 @@
 
 namespace CarvedRock.Api.GraphQL.Types
 {
-    public class ProductTypeEnumType: EnumerationGraphType<Data.ProductType>
+    public class ProductTypeEnumType: EnumerationGraphType<Data.ProductTypeEnum>
     {
         public ProductTypeEnumType()
         {

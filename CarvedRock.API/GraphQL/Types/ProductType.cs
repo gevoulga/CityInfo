@@ -1,16 +1,18 @@
 ﻿using CarvedRock.Api.Data.Entities;
 using CarvedRock.Api.Repositories;
+using GraphQL.Authorization.AspNetCore.Identity.Helpers;
 using GraphQL.DataLoader;
 using GraphQL.Types;
 
 namespace CarvedRock.Api.GraphQL.Types
 {
-    public sealed class ProductType: ObjectGraphType<Product>
+    public class ProductType: ObjectGraphType<Product>
     {
         public ProductType(
             ProductReviewRepository reviewRepository,
             IDataLoaderContextAccessor dataLoaderContextAccessor)
         {
+            // Name = "Product";
             Field(t => t.Id);
             Field(t => t.Name).Description("The name of the product");
             Field(t => t.Description);
@@ -28,6 +30,8 @@ namespace CarvedRock.Api.GraphQL.Types
                 "reviews",
                 resolve: context =>
                 {
+                    var contextUserContext = context.UserContext  as GraphQLUserContext;;
+
                     var productId = context.Source.Id;
                     
                     //Using DataLoader (acts like a cache)
@@ -39,6 +43,8 @@ namespace CarvedRock.Api.GraphQL.Types
                     //Using the repository directly
                     // return reviewRepository.GetForProduct(productId);
                 });
+            
+            Interface<ProductInterfaceType>();
         }
     }
 }

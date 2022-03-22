@@ -10,7 +10,8 @@
 
     <ItemGroup>
         <PackageReference Include="GraphQL" Version="4.7.1" />
-<!--        <PackageReference Include="GraphQL.MicrosoftDI" Version="4.7.1" />-->
+        <PackageReference Include="GraphQL.Authorization.AspNetCore.Identity" Version="1.0.1" />
+        <PackageReference Include="GraphQL.MicrosoftDI" Version="4.7.1" />
         <PackageReference Include="GraphQL.Server.Transports.AspNetCore.SystemTextJson" Version="5.2.0" />
         <PackageReference Include="GraphQL.Server.Ui.Playground" Version="5.2.0" />
         <PackageReference Include="NLog.Web.AspNetCore" Version="4.14.0" />

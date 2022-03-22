@@ -1,6 +1,7 @@
 ﻿using CarvedRock.Api.Data;
 using CarvedRock.Api.GraphQL;
 using CarvedRock.Api.Repositories;
+using GraphQL.Authorization.AspNetCore.Identity.Helpers;
 using GraphQL.Server;
 using GraphQL.Server.Ui.Playground;
 using Microsoft.AspNetCore.Builder;
@@ -52,6 +53,8 @@ namespace CarvedRock.Api
                 })
                 .AddSystemTextJson()
                 .AddGraphTypes(ServiceLifetime.Scoped)
+                .AddUserContextBuilder(httpContext => new GraphQLUserContext { User = httpContext.User })
+                .AddErrorInfoProvider(opt => opt.ExposeExceptionStackTrace = _env.IsDevelopment())
                 .AddDataLoader();
         }
 

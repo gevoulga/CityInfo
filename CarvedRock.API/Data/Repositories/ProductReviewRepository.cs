@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using CarvedRock.Api.Data;
 using CarvedRock.Api.Data.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace CarvedRock.Api.Repositories
 {
