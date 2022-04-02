@@ -97,11 +97,14 @@ query productQuery($productId: ID!){
     public static IEnumerable<TestCaseData> ProductQueryCases()
     {
         yield return new TestCaseData(2)
-            .Returns(new ProductQueryResponse.QueryProduct()
+            .Returns(new ProductQueryResponse()
             {
-                Id = 2,
-                Name = "Army Slippers",
-                Description = "For your everyday marches in the army."
+                Product = new ProductQueryResponse.QueryProduct()
+                {
+                    Id = 2,
+                    Name = "Army Slippers",
+                    Description = "For your everyday marches in the army."
+                }
             });
     }
 }

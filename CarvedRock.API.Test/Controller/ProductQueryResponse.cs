@@ -2,7 +2,7 @@
 
 public class ProductQueryResponse
 {
-    private QueryProduct Product { get; set; }
+    public QueryProduct Product { get; set; }
 
     public class QueryProduct
     {
