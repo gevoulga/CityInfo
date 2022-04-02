@@ -5,10 +5,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Folder Include="wwwroot\" />
-    </ItemGroup>
-
-    <ItemGroup>
         <PackageReference Include="GraphQL" Version="4.7.1" />
         <PackageReference Include="GraphQL.Authorization.AspNetCore.Identity" Version="1.0.1" />
         <PackageReference Include="GraphQL.MicrosoftDI" Version="4.7.1" />
