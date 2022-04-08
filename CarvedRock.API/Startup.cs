@@ -1,7 +1,8 @@
 ﻿using CarvedRock.Api.Data;
 using CarvedRock.Api.GraphQL;
 using CarvedRock.Api.Repositories;
-using GraphQL.Authorization.AspNetCore.Identity.Helpers;
+using CarvedRock.Api.Services;
+using GraphQL.MicrosoftDI;
 using GraphQL.Server;
 using GraphQL.Server.Ui.Playground;
 using Microsoft.AspNetCore.Builder;
@@ -34,6 +35,8 @@ namespace CarvedRock.Api
             });
             services.AddScoped<ProductRepository>();
             services.AddScoped<ProductReviewRepository>();
+            //The review message service needs to be singleton so there's one unique stream
+            services.AddSingleton<ReviewMessageService>();
 
             services.AddScoped<CarvedRockSchema>();
 
@@ -44,18 +47,29 @@ namespace CarvedRock.Api
             //     .AddErrorInfoProvider(opt => opt.ExposeExceptionStackTrace = true)
             //     .AddSchema<StarWarsSchema>()
             //     .AddGraphTypes(typeof(StarWarsSchema).Assembly);
+            services.AddGraphQL(builder =>
+            {
+                builder
+                    .AddSelfActivatingSchema<CarvedRockSchema>()
+                    .AddSystemTextJson()
+                    .AddWebSockets();
+                global::GraphQL.GraphQLBuilderExtensions.AddErrorInfoProvider(builder,
+                    options => options.ExposeExceptionStackTrace = _env.IsDevelopment());
+                global::GraphQL.DataLoader.GraphQLBuilderExtensions.AddDataLoader(builder);
+            });
             // GraphQL.MicrosoftDI.GraphQLBuilderExtensions.AddGraphQL(services)
             //     .AddSelfActivatingSchema<CarvedRockSchema>()
             //     .AddSystemTextJson();
-            services.AddGraphQL(o =>
-                {
-                    // o.ExposeExceptions = false;
-                })
-                .AddSystemTextJson()
-                .AddGraphTypes(ServiceLifetime.Scoped)
-                .AddUserContextBuilder(httpContext => new GraphQLUserContext { User = httpContext.User })
-                .AddErrorInfoProvider(opt => opt.ExposeExceptionStackTrace = _env.IsDevelopment())
-                .AddDataLoader();
+            // services.AddGraphQL(o =>
+            //     {
+            //         // o.ExposeExceptions = false;
+            //     })
+            //     .AddSystemTextJson()
+            //     .AddGraphTypes(ServiceLifetime.Scoped)
+            //     .AddUserContextBuilder(httpContext => new GraphQLUserContext { User = httpContext.User })
+            //     .AddErrorInfoProvider(opt => opt.ExposeExceptionStackTrace = _env.IsDevelopment())
+            //     .AddDataLoader()
+            //     .AddWebSockets();
         }
 
         public void Configure(IApplicationBuilder app, CarvedRockDbContext dbContext)
@@ -63,6 +77,10 @@ namespace CarvedRock.Api
             if (_env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
 
+            //Enable websocket and add the subscription schema
+            app.UseWebSockets();
+            app.UseGraphQLWebSockets<CarvedRockSchema>();
+            
             app.UseGraphQL<CarvedRockSchema>(); //adds the api at /graphql
             app.UseGraphQLPlayground(new PlaygroundOptions()); //adds the playground ui to play around with the api
             dbContext.Seed();

@@ -11,8 +11,10 @@ namespace CarvedRock.Api.GraphQL
         {           
             Query = sp.GetRequiredService<CarvedRockQuery>();
             Mutation = sp.GetRequiredService<CarvedRockMutation>();
+            Subscription = sp.GetRequiredService<CarvedRockSubscription>();
             RegisterType(typeof(ProductType));
             RegisterType(typeof(UsedProductType));
+            RegisterType(typeof(ReviewAddedMessageType));
         }
     }
 }

@@ -10,7 +10,7 @@
         <PackageReference Include="GraphQL.Client" Version="4.0.2" />
         <PackageReference Include="GraphQL.Client.Serializer.SystemTextJson" Version="4.0.2" />
         <PackageReference Include="Microsoft.AspNetCore.App" />
-        <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.2" />
     </ItemGroup>
 

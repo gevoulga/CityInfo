@@ -1,6 +1,7 @@
 ﻿using CarvedRock.Api.Data.Entities;
 using CarvedRock.Api.GraphQL.Types;
 using CarvedRock.Api.Repositories;
+using CarvedRock.Api.Services;
 using GraphQL;
 using GraphQL.Types;
 
@@ -8,7 +9,9 @@ namespace CarvedRock.Api.GraphQL
 {
     public class CarvedRockMutation: ObjectGraphType
     {
-        public CarvedRockMutation(ProductReviewRepository repository)
+        public CarvedRockMutation(
+            ProductReviewRepository repository,
+            ReviewMessageService reviewMessageService)
         {
             //Using async signature to be able to await
             FieldAsync<ProductReviewType>(
@@ -24,6 +27,7 @@ namespace CarvedRock.Api.GraphQL
                     // The properties need to match for this to work!
                     var review = context.GetArgument<ProductReview>("review");
                     var productReview = await repository.AddReview(review);
+                    reviewMessageService.AddReviewMessage(productReview);
                     return productReview;
                 });
         }
