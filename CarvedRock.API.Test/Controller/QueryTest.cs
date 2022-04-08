@@ -1,12 +1,9 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
-using CarvedRock.Api.Data.Entities;
 using FluentAssertions;
 using GraphQL;
-using GraphQL.Client.Http;
 using NUnit.Framework;
 
 namespace CarvedRock.API.Test.Controller;
