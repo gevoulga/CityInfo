@@ -15,6 +15,7 @@ public class ControllerTestSetup
 {
     private WebApplicationFactory<Program> _webApplicationFactory;
     public static TestServer TestServer { get; private set; }
+    public static WebSocketClient webSocketClient { get; private set; }
     public static GraphQLHttpClient GraphQlHttpClient { get; private set; }
 
     [OneTimeSetUp]
@@ -32,6 +33,7 @@ public class ControllerTestSetup
                 });
             });
         TestServer = _webApplicationFactory.Server;
+        webSocketClient = TestServer.CreateWebSocketClient();
         var httpClient = _webApplicationFactory.CreateClient();
 
 
@@ -40,8 +42,9 @@ public class ControllerTestSetup
             new GraphQLHttpClientOptions()
             {
                 EndPoint = new Uri(TestServer.BaseAddress, "graphql"),
-                ConfigureWebsocketOptions = options => 
-                    options.UseDefaultCredentials = true
+                // WebSocketEndPoint = webSocketClient.,
+                // ConfigureWebsocketOptions = options => 
+                //     options.UseDefaultCredentials = true
             },
             new SystemTextJsonSerializer(),
             httpClient);

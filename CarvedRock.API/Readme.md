@@ -6,6 +6,11 @@ query getProducts{
     name,
     ... on ProductType {
       description,
+      reviews {
+        id,
+        title,
+        review
+      }
     }
   }
 }
