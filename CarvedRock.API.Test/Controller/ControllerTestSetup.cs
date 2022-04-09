@@ -39,7 +39,9 @@ public class ControllerTestSetup
         GraphQlHttpClient = new GraphQLHttpClient(
             new GraphQLHttpClientOptions()
             {
-                EndPoint = new Uri(TestServer.BaseAddress, "graphql")
+                EndPoint = new Uri(TestServer.BaseAddress, "graphql"),
+                ConfigureWebsocketOptions = options => 
+                    options.UseDefaultCredentials = true
             },
             new SystemTextJsonSerializer(),
             httpClient);

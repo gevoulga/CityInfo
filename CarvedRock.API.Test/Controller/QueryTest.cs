@@ -41,7 +41,7 @@ public class QueryTests
 
         responseMessage.StatusCode
             .Should().Be(HttpStatusCode.OK);
-        
+
         var body = await responseMessage.Content.ReadAsStringAsync();
         var jsonNode = JsonNode.Parse(body);
         TestContext.Progress.WriteLine($"Received products: {body}");
@@ -56,8 +56,8 @@ public class QueryTests
         // productObjects.Select(o => o["id"].AsValue())
         //     .Should()
         //     .ContainEquivalentOf(Enumerable.Range(1, 7));
-        
-        
+
+
         var query = new GraphQLRequest
         {
             Query = @"
@@ -67,11 +67,10 @@ public class QueryTests
 }"
         };
         var response = await ControllerTestSetup.GraphQlHttpClient.SendQueryAsync<ProductQueryResponse>(query);
-        
     }
 
     [TestCaseSource(nameof(ProductQueryCases))]
-    public async Task<ProductQueryResponse> QueryProductTest(int id)
+    public async Task QueryProductTest(int id, ProductQueryResponse expected)
     {
         var query = new GraphQLRequest
         {
@@ -88,13 +87,16 @@ query productQuery($productId: ID!){
             Variables = new {productId = id}
         };
         var response = await ControllerTestSetup.GraphQlHttpClient.SendQueryAsync<ProductQueryResponse>(query);
-        return  response.Data; //. GetDataFieldAs<ProductModel>("product");
+        var data = response.Data; //. GetDataFieldAs<ProductModel>("product");
+
+        data.Should()
+            .BeEquivalentTo(expected);
     }
 
     public static IEnumerable<TestCaseData> ProductQueryCases()
     {
-        yield return new TestCaseData(2)
-            .Returns(new ProductQueryResponse()
+        yield return new TestCaseData(2,
+            new ProductQueryResponse()
             {
                 Product = new ProductQueryResponse.QueryProduct()
                 {

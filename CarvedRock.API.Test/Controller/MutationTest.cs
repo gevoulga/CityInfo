@@ -22,7 +22,7 @@ mutation createReview($review: reviewInput!){
             Variables = new {review = productReview}
         };
         var response = await ControllerTestSetup.GraphQlHttpClient.SendQueryAsync<CreateReviewResponse>(query);
-        TestContext.Progress.WriteLine($"Received: {response.Data}");
+        TestContext.Progress.WriteLine($"Received: {response.Data.createReview}");
         return  response.Data.createReview.Id; //. GetDataFieldAs<ProductModel>("product");
     }
 

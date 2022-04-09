@@ -1,12 +1,9 @@
-﻿using System.Reflection;
-using CarvedRock.Api.Data;
+﻿using CarvedRock.Api.Data;
 using CarvedRock.Api.GraphQL;
 using CarvedRock.Api.Repositories;
 using CarvedRock.Api.Services;
-using GraphQL;
 using GraphQL.Authorization.AspNetCore.Identity.Helpers;
-using GraphQL.DataLoader;
-using GraphQL.MicrosoftDI;
+// using GraphQL.MicrosoftDI;
 using GraphQL.Server;
 using GraphQL.Server.Ui.Playground;
 using Microsoft.AspNetCore.Builder;
@@ -51,31 +48,27 @@ namespace CarvedRock.Api
             //     .AddErrorInfoProvider(opt => opt.ExposeExceptionStackTrace = true)
             //     .AddSchema<StarWarsSchema>()
             //     .AddGraphTypes(typeof(StarWarsSchema).Assembly);
-            services.AddGraphQL(builder =>
-            {
-                // GraphQLBuilderExtensions.AddSystemTextJson(builder);
-                builder
-                    .AddSystemTextJson()
-                    .AddGraphTypes(Assembly.GetCallingAssembly())
-                    .AddSelfActivatingSchema<CarvedRockSchema>()
-                    .AddUserContextBuilder(httpContext => new GraphQLUserContext { User = httpContext.User })
-                    .AddErrorInfoProvider(options => options.ExposeExceptionStackTrace = _env.IsDevelopment())
-                    .AddDataLoader()
-                    .AddWebSockets();
-            });
+            // GraphQLBuilderExtensions.AddGraphQL(services)
+            //         .AddSystemTextJson()
+            //         .AddGraphTypes(Assembly.GetCallingAssembly())
+            //         .AddSelfActivatingSchema<CarvedRockSchema>()
+            //         .AddUserContextBuilder(httpContext => new GraphQLUserContext { User = httpContext.User })
+            //         .AddErrorInfoProvider(options => options.ExposeExceptionStackTrace = _env.IsDevelopment())
+            //         .AddDataLoader()
+            //         .AddWebSockets();
             // GraphQL.MicrosoftDI.GraphQLBuilderExtensions.AddGraphQL(services)
             //     .AddSelfActivatingSchema<CarvedRockSchema>()
             //     .AddSystemTextJson();
-            // services.AddGraphQL(o =>
-            //     {
-            //         // o.ExposeExceptions = false;
-            //     })
-            //     .AddSystemTextJson()
-            //     .AddGraphTypes(ServiceLifetime.Scoped)
-            //     .AddUserContextBuilder(httpContext => new GraphQLUserContext { User = httpContext.User })
-            //     .AddErrorInfoProvider(opt => opt.ExposeExceptionStackTrace = _env.IsDevelopment())
-            //     .AddDataLoader()
-            //     .AddWebSockets();
+            services.AddGraphQL(o =>
+                {
+                    // o.ExposeExceptions = false;
+                })
+                .AddSystemTextJson()
+                .AddGraphTypes(ServiceLifetime.Scoped)
+                .AddUserContextBuilder(httpContext => new GraphQLUserContext { User = httpContext.User })
+                .AddErrorInfoProvider(opt => opt.ExposeExceptionStackTrace = _env.IsDevelopment())
+                .AddDataLoader()
+                .AddWebSockets();
         }
 
         public void Configure(IApplicationBuilder app, CarvedRockDbContext dbContext)
