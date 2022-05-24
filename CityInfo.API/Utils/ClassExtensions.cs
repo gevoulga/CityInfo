@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Reflection;
@@ -37,9 +38,8 @@ public static class ClassExtensions
     {
         return dictionary.Aggregate(new T(), (obj, kv) =>
             {
-                obj.GetType()
-                    .GetProperty(kv.Key)
-                    ?.SetValue(obj, kv.Value, null);
+                var propertyInfo = obj.GetType().GetProperty(kv.Key) ?? throw new InvalidCastException($"Property {kv.Key} not found in class {obj.GetType()}");
+                propertyInfo.SetValue(obj, kv.Value, null);
                 return obj;
             });
     }
