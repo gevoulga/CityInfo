@@ -1,3 +1,5 @@
+using System.Reactive.Disposables;
+using FluentAssertions;
 using NUnit.Framework;
 
 namespace CityInfo.Chat.Test;
@@ -54,5 +56,62 @@ public class RxParallelism
 
             return i;
         });
+    }
+
+    [Test]
+    public void TestMultipleSubscribersUniqueSource()
+    {
+        var observable = Observable.Create<int>(observer =>
+        {
+            var random = new Random();
+            for (int i = 0; i < 5; i++)
+            {
+                observer.OnNext(random.Next());
+            }
+            observer.OnCompleted();
+            return Disposable.Empty;
+        });
+
+        var observablesss = observable
+            // Keep a unique subscription?
+            .Publish()
+            .RefCount(2); // We need a min of 2 observers to start the subscription
+
+
+        TestContext.Progress.WriteLine("Starting");
+        observablesss.ToList().Subscribe(list1 => TestContext.Progress.WriteLine($"list1: {string.Join(" ", list1)}"));
+        observablesss.ToList().Subscribe(list2 => TestContext.Progress.WriteLine($"list2: {string.Join(" ", list2)}"));
+    }
+
+    [Test]
+    public async Task TestMultipleSubscribersUniqueSourceAwait()
+    {
+        var observable = Observable.Create<int>(observer =>
+        {
+            var random = new Random();
+            for (int i = 0; i < 5; i++)
+            {
+                observer.OnNext(random.Next());
+            }
+            observer.OnCompleted();
+            return Disposable.Empty;
+        });
+
+        var observablesss = observable
+            // Keep a unique subscription?
+            .Replay() // We need a replay here otherwise the awaits will block
+            .RefCount();
+
+
+        TestContext.Progress.WriteLine("Starting");
+        var list1 = await observablesss.ToList();
+        TestContext.Progress.WriteLine($"list1: {string.Join(" ", list1)}");
+
+        var list2 = await observablesss.ToList();
+        TestContext.Progress.WriteLine($"list2: {string.Join(" ", list2)}");
+
+        list1.Should().HaveCount(5);
+        list2.Should().HaveCount(5);
+        list1.Should().BeEquivalentTo(list2);
     }
 }
