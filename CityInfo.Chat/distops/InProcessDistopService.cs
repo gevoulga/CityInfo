@@ -9,8 +9,13 @@ public class InProcessDistopService : IDistopService
         _distopExecutor = distopExecutor;
     }
 
-    public object? Call(DistopContext distopContext, bool fireAndForget)
+    public async Task<object?> Call(DistopContext distopContext)
     {
-        return _distopExecutor.Do(distopContext);
+        return await _distopExecutor.Do(distopContext);
+    }
+
+    public Task FireAndForget(DistopContext distopContext)
+    {
+        throw new NotImplementedException();
     }
 }

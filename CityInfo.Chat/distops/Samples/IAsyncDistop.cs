@@ -1,12 +1,10 @@
-﻿namespace CityInfo.Parking.distops;
+﻿namespace CityInfo.Parking.distops.Samples;
 
-public interface IDistop
+public interface IAsyncDistop
 {
-    long SyncCallReturns();
-    void SyncFireAndForget();
     Task FireAndForget();
-    Task Throws();
     Task DoSomething<T>(DistopDto distopDto, T t, CancellationToken cancellationToken);
+    Task<long> JustALong();
     Task<long> CurrentTick(DistopDto distopDto, CancellationToken cancellationToken);
     IObservable<long> Ticks(DistopDto distopDto);
 }

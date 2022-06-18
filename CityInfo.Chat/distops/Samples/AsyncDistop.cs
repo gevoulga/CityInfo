@@ -2,14 +2,14 @@
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 
-namespace CityInfo.Parking.distops;
+namespace CityInfo.Parking.distops.Samples;
 
-public class Distop : IDistop
+public class AsyncDistop : IAsyncDistop
 {
-    private readonly ILogger<Distop> _logger;
+    private readonly ILogger<AsyncDistop> _logger;
     private readonly IObservable<long> _tickStream;
 
-    public Distop(ILogger<Distop> logger)
+    public AsyncDistop(ILogger<AsyncDistop> logger)
     {
         this._logger = logger;
         _tickStream = Observable.Interval(TimeSpan.FromSeconds(1))
@@ -32,11 +32,6 @@ public class Distop : IDistop
         await Task.Delay(TimeSpan.FromSeconds(10));
     }
 
-    public Task Throws()
-    {
-        throw new NotImplementedException();
-    }
-
     public virtual async Task DoSomething<T>(DistopDto distopDto, T t, CancellationToken cancellationToken)
     {
         var watch = Stopwatch.StartNew();
@@ -48,6 +43,12 @@ public class Distop : IDistop
         _logger.LogInformation($"DoSomething finished in {watch.Elapsed}");
     }
 
+    public virtual async Task<long> JustALong()
+    {
+        await Task.Delay(TimeSpan.FromSeconds(10));
+        return 3;
+    }
+
     public virtual async Task<long> CurrentTick(DistopDto distopDto, CancellationToken cancellationToken)
     {
         var watch = Stopwatch.StartNew();
@@ -55,7 +56,7 @@ public class Distop : IDistop
 
         try
         {
-            var tick = await _tickStream.Take(1).ToTask(cancellationToken);
+            var tick = await _tickStream.Take(3).ToTask(cancellationToken);
             _logger.LogInformation($"CurrentTick: {tick}");
             return tick;
         }

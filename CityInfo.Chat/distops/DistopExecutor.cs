@@ -25,7 +25,7 @@ public class DistopExecutor
     //         .CreateInterfaceProxyWithoutTarget<TInterface>(interceptor);
     // }
 
-    public object? Do(DistopContext distopContext)
+    public async Task<object?> Do(DistopContext distopContext)
     {
         var watch = Stopwatch.StartNew();
         _logger.LogInformation($"Before target call {distopContext.MethodDeclaringObject}.{distopContext.MethodName} with args: {distopContext.Arguments}" );
@@ -40,12 +40,8 @@ public class DistopExecutor
         try
         {
             var returnedValue = methodInfo.Invoke(target, parameters);
-            if (IsValidType(methodReturnType, returnedValue))
-            {
-                return returnedValue;
-            }
-
-            throw new InvalidCastException($"Cannot cast {returnedValue} to {methodReturnType}");
+            var ret = await IsValidTypeAndReturn(methodReturnType, returnedValue);
+            return ret;
         }
         catch (Exception ex)
         {
@@ -66,7 +62,7 @@ public class DistopExecutor
         return target;
     }
 
-    private static MethodInfo ResolveMethod(DistopContext distopContext, object target)
+    private MethodInfo ResolveMethod(DistopContext distopContext, object target)
     {
         var genericParameterCount = distopContext.GenericArguments?.Length ?? 0;
         var parameterTypes = distopContext.ArgumentTypes
@@ -77,12 +73,42 @@ public class DistopExecutor
         return methodInfo;
     }
 
-    private static bool IsValidType(Type? methodReturnType, object? returnedValue)
+    private async Task<object?> IsValidTypeAndReturn(Type? methodReturnType, object? returnedValue)
     {
         var type = returnedValue?.GetType();
-        bool IsAssignableFrom() => methodReturnType?.IsAssignableFrom(type) ?? false;
+        bool IsSync() => methodReturnType?.IsAssignableFrom(type) ?? false;
         bool IsVoid() => methodReturnType?.IsAssignableFrom(typeof(void)) ?? false;
-        bool IsTask() => methodReturnType?.IsAssignableFrom(typeof(Task<>)) ?? false;
-        return IsAssignableFrom() || IsVoid() || IsTask();
+        bool IsTask() => methodReturnType?.IsAssignableFrom(typeof(Task)) ?? false;
+        bool IsGenericTask() => methodReturnType?.GetGenericTypeDefinition().IsAssignableFrom(typeof(Task<>)) ?? false;
+
+        if (IsTask())
+        {
+            var task = (Task) returnedValue;
+            await task.ConfigureAwait(false);
+            return null;
+        }
+        if (IsGenericTask())
+        {
+            return returnedValue;
+            // Task task = (Task) returnedValue;
+            // // Make sure it runs to completion
+            // await task.ConfigureAwait(false);
+            // // Harvest the result
+            // return (object)((dynamic)task).Result;
+        }
+        else if (IsVoid() || IsSync())
+        {
+            return returnedValue;
+        }
+
+        throw new InvalidCastException($"Cannot cast {returnedValue} to {methodReturnType}");
     }
+
+    // private Task<object?> TaskReturnValue(Type? methodReturnType, object? returnedValue)
+    // {
+    //     bool isBar = foo.GetType().GetInterfaces().Any(x =>
+    //         x.IsGenericType &&
+    //         x.GetGenericTypeDefinition() == typeof(Tas<>));
+    //     bool IsTask() => methodReturnType?.IsAssignableFrom(typeof(Task<>)) ?? false;
+    // }
 }

@@ -5,17 +5,17 @@ using Castle.DynamicProxy;
 
 namespace CityInfo.Parking.distops;
 
-public class Interceptor : IInterceptor
+public class DistopInterceptor : IInterceptor
 {
-    private readonly ILogger<Interceptor> _logger;
+    private readonly ILogger<DistopInterceptor> _logger;
     private readonly IDistopService _distopService;
-    private readonly bool fireAndForget;
+    private readonly bool _fireAndForget;
 
-    internal Interceptor(ILogger<Interceptor> logger, IDistopService distopService, bool fireAndForget)
+    internal DistopInterceptor(ILogger<DistopInterceptor> logger, IDistopService distopService, bool fireAndForget)
     {
         _logger = logger;
         _distopService = distopService;
-        this.fireAndForget = fireAndForget;
+        this._fireAndForget = fireAndForget;
     }
 
     public void Intercept(IInvocation invocation)
@@ -27,11 +27,35 @@ public class Interceptor : IInterceptor
             var distopContext = ResolveDistopContext(invocation);
 
             // Check for the flag fire and forget
-            invocation.Method.ReturnType.IsAssignableFrom(typeof(Task));
+            bool IsTask() => invocation.Method.ReturnType.IsAssignableFrom(typeof(Task));
+            bool IsGenericTask() => invocation.Method.ReturnType.GetGenericTypeDefinition().IsAssignableFrom(typeof(Task<>));
 
             // Call the actual distop service to send the distop
-            var returnedValue = _distopService.Call(distopContext, fireAndForget);
-            invocation.ReturnValue = returnedValue;
+            if (_fireAndForget)
+            {
+                // await _distopService.FireAndForget(distopContext);
+                // invocation.ReturnValue = returnedValue;
+            }
+            else
+            {
+                var returnedValue = _distopService.Call(distopContext);
+
+                // Replace the return value so that it only completes when the post-interception code is complete.
+                // invocation.ReturnValue = InterceptAsync(returnedValue);
+
+                if (IsTask())
+                {
+                    invocation.ReturnValue = returnedValue;
+                }
+                else if (IsGenericTask())
+                {
+                    invocation.ReturnValue = returnedValue.Result;
+                }
+                else
+                {
+                    invocation.ReturnValue = returnedValue.Result;
+                }
+            }
 
             // var args = JsonSerializer.Serialize(invocation.Arguments);
             // var genArgs = JsonSerializer.Serialize(invocation.GenericArguments);
@@ -48,6 +72,16 @@ public class Interceptor : IInterceptor
             watch.Stop();
             _logger.LogInformation($"After target call {invocation.Method.Name}, elapsed {watch.Elapsed}");
         }
+    }
+
+    // This method will complete when PostInterceptAsync completes.
+    private async Task InterceptAsync(Task originalTask)
+    {
+        // Asynchronously wait for the original task to complete
+        await originalTask;
+
+        // Asynchronous post-execution
+        // await PostInterceptAsync();
     }
 
     private DistopContext ResolveDistopContext(IInvocation invocation)

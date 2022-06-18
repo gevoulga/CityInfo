@@ -4,18 +4,18 @@ namespace CityInfo.Parking.distops;
 
 public class DistopBuilder
 {
-    public static TInterface Create<TInterface>(ILogger<Interceptor> logger, IDistopService distopService)
+    public static TInterface Create<TInterface>(ILogger<DistopInterceptor> logger, IDistopService distopService)
         where TInterface : class
     {
-        var interceptor = new Interceptor(logger, distopService, false);
+        var interceptor = new DistopInterceptor(logger, distopService, false);
         return new ProxyGenerator()
             .CreateInterfaceProxyWithoutTarget<TInterface>(interceptor);
     }
 
-    public static TInterface FireAndForget<TInterface>(ILogger<Interceptor> logger, IDistopService distopService)
+    public static TInterface FireAndForget<TInterface>(ILogger<DistopInterceptor> logger, IDistopService distopService)
         where TInterface : class
     {
-        var interceptor = new Interceptor(logger, distopService, true);
+        var interceptor = new DistopInterceptor(logger, distopService, true);
         ValidateFireAndForget(typeof(TInterface));
         return new ProxyGenerator()
             .CreateInterfaceProxyWithoutTarget<TInterface>(interceptor);
