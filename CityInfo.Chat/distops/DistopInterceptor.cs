@@ -14,7 +14,7 @@ public class DistopInterceptor : BaseDistopInterceptor
     {
         // Check for the flag fire and forget
         bool IsTask() => methodReturnType.IsAssignableFrom(typeof(Task));
-        bool IsGenericTask() => methodReturnType.GetGenericTypeDefinition().IsAssignableFrom(typeof(Task<>));
+        bool IsGenericTask() => (methodReturnType?.IsGenericType ?? false) && (methodReturnType?.GetGenericTypeDefinition().IsAssignableFrom(typeof(Task<>)) ?? false);
 
         var returnedValue = _distopService.Call(distopContext);
 
