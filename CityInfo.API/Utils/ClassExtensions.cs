@@ -26,11 +26,9 @@ public static class ClassExtensions
         BindingFlags bindingAttr = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance)
     {
         // https://stackoverflow.com/questions/4943817/mapping-object-to-dictionary-and-vice-versa
-        return source.GetType().GetProperties(bindingAttr).ToDictionary
-        (
+        return source.GetType().GetProperties(bindingAttr).ToDictionary(
             propInfo => propInfo.Name,
-            propInfo => propInfo.GetValue(source, null)
-        );
+            propInfo => propInfo.GetValue(source, null));
     }
 
     public static T ToObject<T>(this IDictionary<string, object> dictionary)

@@ -6,12 +6,13 @@
 
     <ItemGroup>
         <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
-        <PackageReference Include="FluentValidation.AspNetCore" Version="10.4.0" />
-        <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="6.0.3" />
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.3" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.3" />
-        <PackageReference Include="NLog.Web.AspNetCore" Version="4.14.0" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.0" />
+        <PackageReference Include="FluentAssertions.Reactive" Version="0.2.0" />
+        <PackageReference Include="FluentValidation.AspNetCore" Version="11.0.1" />
+        <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="6.0.5" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.5" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.5" />
+        <PackageReference Include="NLog.Web.AspNetCore" Version="5.0.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.1" />
         <PackageReference Include="System.Linq.Async" Version="6.0.1" />
         <PackageReference Include="System.Reactive" Version="5.0.0" />
     </ItemGroup>

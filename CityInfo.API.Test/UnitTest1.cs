@@ -1,8 +1,12 @@
 using System;
+using System.Collections.Generic;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CityInfo.API.Test
@@ -27,6 +31,12 @@ namespace CityInfo.API.Test
             var t = await zip.ToTask();
             Console.WriteLine(t);
 
+            Task.WhenAll(Task.FromResult(1), Task.FromResult(1));
+
+            var ints = new[] {1, 2, 3, 4};
+            var observable = await ints.ToObservable();
+            Console.WriteLine(observable);
+
             // var rx1 = Observable.Return("test");
             // var rx2 = Observable.Return(1);
             // Observable.Merge<>(rx1, rx2)
@@ -38,6 +48,31 @@ namespace CityInfo.API.Test
             return tz == null ? fromNullable : Observable.Return(tz);
         }
 
+        [TestMethod]
+        public void TestPassByReferenceOnCollection()
+        {
+            IEnumerable<Ran> array = new[] { new Ran(), new Ran(), new Ran() };
+            Console.WriteLine($"list2: {string.Join(" ", array)}");
+
+            // var url = new Uri("https://teams.live.com/meet/9333566814082");
+            // var url = new Uri("https://teams-fl.microsoft.com/l/9333566814082");
+            var url = new Uri("https://teams.live.com/l/invite/DAAjCvjLnQP6MZCVgQ");
+            var toUri = new Uri("https://teams.live.com/l/");
+
+            var relativeUrl = toUri.MakeRelativeUri(url);
+            Console.WriteLine(relativeUrl);
+            Console.WriteLine(relativeUrl == url);
+            Console.WriteLine(relativeUrl.Segments[0]);
+        }
+
+        private void InOutTest<T>(params Ran[] args)
+        {
+        }
+
+        public class Ran
+        {
+            public int Id = new Random().Next();
+        }
 
         [TestMethod]
         public void TestMethod2()
