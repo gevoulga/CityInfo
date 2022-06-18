@@ -2,5 +2,8 @@
 
 public interface IThrowsDistop
 {
-    Task Throws();
+
+    void ThrowsSync();
+    Task ThrowsAsync();
+    Task<long> ThrowsAsyncLong();
 }

@@ -14,8 +14,8 @@ public class InProcessDistopService : IDistopService
         return await _distopExecutor.Do(distopContext);
     }
 
-    public Task FireAndForget(DistopContext distopContext)
+    public async Task FireAndForget(DistopContext distopContext)
     {
-        throw new NotImplementedException();
+        await _distopExecutor.Do(distopContext);
     }
 }

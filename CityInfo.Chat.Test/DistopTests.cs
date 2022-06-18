@@ -22,13 +22,13 @@ namespace CityInfo.Chat.Test
         {
             var loggerFactory = new NLogLoggerFactory();
             interceptorLogger = loggerFactory.CreateLogger<DistopInterceptor>();
-            var distopLogger = loggerFactory.CreateLogger<AsyncDistop>();
 
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddSingleton<NLogLoggerFactory>();
             serviceCollection.AddLogging();
             serviceCollection.AddSingleton<IAsyncDistop, AsyncDistop>();
             serviceCollection.AddSingleton<ISyncDistop, SyncDistop>();
+            serviceCollection.AddSingleton<IThrowsDistop, ThrowsDistop>();
             serviceCollection.AddSingleton<IFireAndForgetDistop, FireAndForgetDistop>();
             var sp = serviceCollection.BuildServiceProvider();
 
@@ -95,8 +95,13 @@ namespace CityInfo.Chat.Test
         public async Task Throws()
         {
             var proxy = DistopBuilder.Create<IThrowsDistop>(interceptorLogger, distopService);
-            await FluentActions.Invoking(async () => await proxy.Throws())
+            FluentActions.Invoking(() => proxy.ThrowsSync())
+                .Should().Throw<InvalidOperationException>();
+            await FluentActions.Invoking(async () => await proxy.ThrowsAsync())
                 .Should().ThrowAsync<NotImplementedException>();
+            await FluentActions.Invoking(async () => await proxy.ThrowsAsyncLong())
+                .Should().ThrowAsync<NotImplementedException>();
+
         }
 
 
