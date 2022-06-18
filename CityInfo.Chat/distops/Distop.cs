@@ -17,9 +17,24 @@ public class Distop : IDistop
             .RefCount();
     }
 
-    public long CurrentTickk()
+    public long SyncCallReturns()
     {
         return 111;
+    }
+
+    public void SyncFireAndForget()
+    {
+        Task.Delay(TimeSpan.FromSeconds(10)).GetAwaiter().GetResult();
+    }
+
+    public async Task FireAndForget()
+    {
+        await Task.Delay(TimeSpan.FromSeconds(10));
+    }
+
+    public Task Throws()
+    {
+        throw new NotImplementedException();
     }
 
     public virtual async Task DoSomething<T>(DistopDto distopDto, T t, CancellationToken cancellationToken)

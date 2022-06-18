@@ -9,7 +9,7 @@ public class InProcessDistopService : IDistopService
         _distopExecutor = distopExecutor;
     }
 
-    public object? Call(DistopContext distopContext)
+    public object? Call(DistopContext distopContext, bool fireAndForget)
     {
         return _distopExecutor.Do(distopContext);
     }

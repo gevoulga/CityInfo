@@ -9,19 +9,13 @@ public class Interceptor : IInterceptor
 {
     private readonly ILogger<Interceptor> _logger;
     private readonly IDistopService _distopService;
+    private readonly bool fireAndForget;
 
-    protected Interceptor(ILogger<Interceptor> logger, IDistopService distopService)
+    internal Interceptor(ILogger<Interceptor> logger, IDistopService distopService, bool fireAndForget)
     {
         _logger = logger;
         _distopService = distopService;
-    }
-
-    public static TInterface CreateProxy<TInterface>(ILogger<Interceptor> logger, IDistopService distopService)
-        where TInterface : class
-    {
-        var interceptor = new Interceptor(logger, distopService);
-        return new ProxyGenerator()
-            .CreateInterfaceProxyWithoutTarget<TInterface>(interceptor);
+        this.fireAndForget = fireAndForget;
     }
 
     public void Intercept(IInvocation invocation)
@@ -30,28 +24,13 @@ public class Interceptor : IInterceptor
         _logger.LogInformation($"Before target call {invocation.Method.Name} with args: {invocation.Arguments}" );
         try
         {
-            var arguments = invocation.Arguments?
-                .Select<object, (SerializableType type, object obj)>(obj => (obj.GetType(), obj))
-                .ToArray();
-            var genericArguments = invocation.GenericArguments?
-                .Select<Type, SerializableType>(genericType => genericType).ToArray();
-            var argumentTypes = invocation.Method.GetParameters()
-                .Select<ParameterInfo, GenericSerializableType>(parameterInfo => parameterInfo.ParameterType)
-                .ToArray();
+            var distopContext = ResolveDistopContext(invocation);
 
-
-            var distopContext = new DistopContext()
-            {
-                Arguments = arguments,
-                ArgumentTypes = argumentTypes,
-                GenericArguments = genericArguments,
-                MethodDeclaringObject = invocation.Method.DeclaringType,
-                MethodName = invocation.Method.Name,
-                MethodReturnType = invocation.Method.ReturnType,
-            };
+            // Check for the flag fire and forget
+            invocation.Method.ReturnType.IsAssignableFrom(typeof(Task));
 
             // Call the actual distop service to send the distop
-            var returnedValue = _distopService.Call(distopContext);
+            var returnedValue = _distopService.Call(distopContext, fireAndForget);
             invocation.ReturnValue = returnedValue;
 
             // var args = JsonSerializer.Serialize(invocation.Arguments);
@@ -61,7 +40,7 @@ public class Interceptor : IInterceptor
         }
         catch (Exception ex)
         {
-            _logger.LogInformation($"Target exception {ex.Message}");
+            _logger.LogWarning(ex, $"Target call threw exception");
             throw;
         }
         finally
@@ -69,5 +48,27 @@ public class Interceptor : IInterceptor
             watch.Stop();
             _logger.LogInformation($"After target call {invocation.Method.Name}, elapsed {watch.Elapsed}");
         }
+    }
+
+    private DistopContext ResolveDistopContext(IInvocation invocation)
+    {
+        var arguments = invocation.Arguments?
+            .Select<object, (SerializableType type, object obj)>(obj => (obj.GetType(), obj))
+            .ToArray();
+        var genericArguments = invocation.GenericArguments?
+            .Select<Type, SerializableType>(genericType => genericType).ToArray();
+        var argumentTypes = invocation.Method.GetParameters()
+            .Select<ParameterInfo, GenericSerializableType>(parameterInfo => parameterInfo.ParameterType)
+            .ToArray();
+
+        return new DistopContext()
+        {
+            Arguments = arguments,
+            ArgumentTypes = argumentTypes,
+            GenericArguments = genericArguments,
+            MethodDeclaringObject = invocation.Method.DeclaringType,
+            MethodName = invocation.Method.Name,
+            MethodReturnType = invocation.Method.ReturnType,
+        };
     }
 }
