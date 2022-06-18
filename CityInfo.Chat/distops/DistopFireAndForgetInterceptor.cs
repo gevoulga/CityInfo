@@ -12,7 +12,8 @@ public class DistopFireAndForgetInterceptor : BaseDistopInterceptor
 
     protected override object? ExecuteRemote(DistopContext distopContext, Type methodReturnType)
     {
+        bool IsTask() => methodReturnType.IsAssignableFrom(typeof(Task));
         var task = _distopService.FireAndForget(distopContext);
-        return null;
+        return IsTask() ? task : null;
     }
 }
