@@ -13,31 +13,37 @@ namespace CityInfo.Chat.Test
 {
     public class DistopTests
     {
-        private ILogger<DistopInterceptor> interceptorLogger;
-        private InProcessDistopService distopService;
+        private IServiceProvider sp;
 
         public DistopTests()
         {
-            var loggerFactory = new NLogLoggerFactory();
-            interceptorLogger = loggerFactory.CreateLogger<DistopInterceptor>();
+            // var loggerFactory = new NLogLoggerFactory();
+            // interceptorLogger = loggerFactory.CreateLogger<DistopInterceptor>();
 
             var serviceCollection = new ServiceCollection();
-            serviceCollection.AddSingleton<NLogLoggerFactory>();
-            serviceCollection.AddLogging();
-            serviceCollection.AddSingleton<IAsyncDistop, AsyncDistop>();
-            serviceCollection.AddSingleton<ISyncDistop, SyncDistop>();
-            serviceCollection.AddSingleton<IThrowsDistop, ThrowsDistop>();
-            serviceCollection.AddSingleton<IFireAndForgetDistop, FireAndForgetDistop>();
-            var sp = serviceCollection.BuildServiceProvider();
+            serviceCollection.AddLogging(builder => builder
+                .SetMinimumLevel(LogLevel.Information)
+                .AddFilter("Microsoft.Skype.ChatServiceTestFramework", LogLevel.Trace)
+                .AddFilter("Microsoft.Teams.NotificationService", LogLevel.Trace)
+                .AddProvider(new TestContextLoggerProvider(TestContext.CurrentContext)));
+            // serviceCollection.AddSingleton<NLogLoggerFactory>();
+            // serviceCollection.AddLogging();
 
-            var distopExecutor = new DistopExecutor(sp);
-            distopService = new InProcessDistopService(distopExecutor);
+            // The distops initialization
+            serviceCollection
+                .AddDistopsService<InProcessDistopService>() // Add the processing of distops
+                .AddSingleton<IAsyncDistop, AsyncDistop>()
+                .AddSingleton<ISyncDistop, SyncDistop>()
+                .AddSingleton<IThrowsDistop, ThrowsDistop>()
+                .AddSingleton<IFireAndForgetDistop, FireAndForgetDistop>();
+
+            sp = serviceCollection.BuildServiceProvider();
         }
 
         [Test]
         public void InProcessSyncDistop()
         {
-            var proxy = DistopBuilder.Create<ISyncDistop>(interceptorLogger, distopService);
+            var proxy = sp.GetDistop<ISyncDistop>();
             TestContext.Progress.WriteLine("Starting calls to proxy");
 
             proxy.SyncFireAndForget();
@@ -50,7 +56,7 @@ namespace CityInfo.Chat.Test
         [Test]
         public async Task InProcessAsyncDistop()
         {
-            var proxy = DistopBuilder.Create<IAsyncDistop>(interceptorLogger, distopService);
+            var proxy = sp.GetDistop<IAsyncDistop>();
 
             TestContext.Progress.WriteLine("Starting calls to proxy");
             // await proxy.DoSomething<bool>(new DistopDto(), true, CancellationToken.None);
@@ -73,7 +79,7 @@ namespace CityInfo.Chat.Test
         [Test]
         public async Task InProcessDistopFireAndForget()
         {
-            var proxy = DistopBuilder.FireAndForget<IFireAndForgetDistop>(interceptorLogger, distopService);
+            var proxy = sp.GetFireAndForgetDistop<IFireAndForgetDistop>();
 
             TestContext.Progress.WriteLine("Starting calls to proxy");
             // await proxy.DoSomething<bool>(new DistopDto(), true, CancellationToken.None);
@@ -87,12 +93,14 @@ namespace CityInfo.Chat.Test
 
             await proxy.FireAndForget();
             TestContext.Progress.WriteLine($"Should return immediately after fire and forget");
+
+            await Task.Delay(TimeSpan.FromSeconds(22));
         }
 
         [Test]
         public async Task Throws()
         {
-            var proxy = DistopBuilder.Create<IThrowsDistop>(interceptorLogger, distopService);
+            var proxy = sp.GetDistop<IThrowsDistop>();
             FluentActions.Invoking(() => proxy.ThrowsSync())
                 .Should().Throw<InvalidOperationException>();
             await FluentActions.Invoking(async () => await proxy.ThrowsAsync())
@@ -107,8 +115,7 @@ namespace CityInfo.Chat.Test
         public async Task TestMethod1()
         {
 
-
-            var proxy = DistopBuilder.Create<IAsyncDistop>(interceptorLogger, null);
+            var proxy = sp.GetDistop<IAsyncDistop>();
             // var proxy = new ProxyGenerator()
             //     .CreateInterfaceProxyWithoutTarget<IDistop>(interceptor);
             // var proxy = new ProxyGenerator()

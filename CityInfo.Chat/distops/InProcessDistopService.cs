@@ -2,20 +2,21 @@
 
 public class InProcessDistopService : IDistopService
 {
-    private readonly DistopExecutor _distopExecutor;
+    private readonly IDistopExecutor _distopExecutor;
 
-    public InProcessDistopService(DistopExecutor distopExecutor)
+    public InProcessDistopService(IDistopExecutor distopExecutor)
     {
         _distopExecutor = distopExecutor;
     }
 
     public async Task<object?> Call(DistopContext distopContext)
     {
-        return await _distopExecutor.Do(distopContext);
+        return await _distopExecutor.ExecuteDistop(distopContext);
     }
 
-    public async Task FireAndForget(DistopContext distopContext)
+    public Task FireAndForget(DistopContext distopContext)
     {
-        await _distopExecutor.Do(distopContext);
+        Task.Factory.StartNew(async () => await _distopExecutor.ExecuteDistop(distopContext));
+        return Task.CompletedTask;
     }
 }

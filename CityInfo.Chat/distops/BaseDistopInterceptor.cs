@@ -6,9 +6,9 @@ namespace CityInfo.Parking.distops;
 
 public abstract class BaseDistopInterceptor : IInterceptor
 {
-    private readonly ILogger<BaseDistopInterceptor> _logger;
+    private readonly ILogger _logger;
 
-    protected BaseDistopInterceptor(ILogger<BaseDistopInterceptor> logger)
+    protected BaseDistopInterceptor(ILogger logger)
     {
         _logger = logger;
     }

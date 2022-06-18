@@ -4,10 +4,10 @@ public class DistopFireAndForgetInterceptor : BaseDistopInterceptor
 {
     private readonly IDistopService _distopService;
 
-    internal DistopFireAndForgetInterceptor(ILogger<BaseDistopInterceptor> logger, IDistopService distopService)
-        : base(logger)
+    internal DistopFireAndForgetInterceptor(IServiceProvider sp)
+        : base(sp.GetRequiredService<ILogger<DistopInterceptor>>())
     {
-        _distopService = distopService;
+        _distopService = sp.GetRequiredService<IDistopService>();
     }
 
     protected override object? ExecuteRemote(DistopContext distopContext, Type methodReturnType)

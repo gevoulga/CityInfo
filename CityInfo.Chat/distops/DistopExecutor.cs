@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace CityInfo.Parking.distops;
 
-public class DistopExecutor
+public class DistopExecutor : IDistopExecutor
 {
     private readonly ILogger<DistopExecutor> _logger;
     private readonly IServiceProvider _serviceProvider;
@@ -25,7 +25,7 @@ public class DistopExecutor
     //         .CreateInterfaceProxyWithoutTarget<TInterface>(interceptor);
     // }
 
-    public async Task<object?> Do(DistopContext distopContext)
+    public async Task<object?> ExecuteDistop(DistopContext distopContext)
     {
         var watch = Stopwatch.StartNew();
         _logger.LogInformation($"Before target call {distopContext.MethodDeclaringObject}.{distopContext.MethodName} with args: {distopContext.Arguments}" );
@@ -79,7 +79,7 @@ public class DistopExecutor
         bool IsSync() => methodReturnType?.IsAssignableFrom(type) ?? false;
         bool IsVoid() => methodReturnType?.IsAssignableFrom(typeof(void)) ?? false;
         bool IsTask() => methodReturnType?.IsAssignableFrom(typeof(Task)) ?? false;
-        bool IsGenericTask() => methodReturnType?.GetGenericTypeDefinition().IsAssignableFrom(typeof(Task<>)) ?? false;
+        bool IsGenericTask() => (methodReturnType?.IsGenericType ?? false) && (methodReturnType?.GetGenericTypeDefinition().IsAssignableFrom(typeof(Task<>)) ?? false);
 
         if (IsTask())
         {
