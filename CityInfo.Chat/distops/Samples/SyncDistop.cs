@@ -1,8 +1,4 @@
-﻿using System.Diagnostics;
-using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
-
-namespace CityInfo.Parking.distops.Samples;
+﻿namespace CityInfo.Parking.distops.Samples;
 
 public class SyncDistop : ISyncDistop
 {

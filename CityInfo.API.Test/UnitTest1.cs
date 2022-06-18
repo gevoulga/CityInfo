@@ -1,12 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CityInfo.API.Test

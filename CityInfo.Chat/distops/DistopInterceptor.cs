@@ -1,8 +1,4 @@
-﻿using System.Diagnostics;
-using System.Reflection;
-using Castle.DynamicProxy;
-
-namespace CityInfo.Parking.distops;
+﻿namespace CityInfo.Parking.distops;
 
 public class DistopInterceptor : BaseDistopInterceptor
 {

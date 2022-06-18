@@ -7,9 +7,6 @@ using System.Reactive.Threading.Tasks;
 using System.Threading;
 using System.Threading.Tasks;
 using GraphQL;
-using GraphQL.Client.Http;
-using GraphQL.Client.Serializer.SystemTextJson;
-using Microsoft.AspNetCore.TestHost;
 using NUnit.Framework;
 
 namespace CarvedRock.API.Test.Controller;
