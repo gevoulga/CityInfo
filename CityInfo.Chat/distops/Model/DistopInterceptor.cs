@@ -1,4 +1,4 @@
-﻿namespace CityInfo.Parking.distops;
+﻿namespace CityInfo.Parking.distops.Model;
 
 public class DistopInterceptor : BaseDistopInterceptor
 {

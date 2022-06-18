@@ -1,4 +1,5 @@
 ﻿using Castle.DynamicProxy;
+using CityInfo.Parking.distops.Model;
 
 namespace CityInfo.Parking.distops;
 

@@ -1,4 +1,6 @@
-﻿namespace CityInfo.Parking.distops;
+﻿using CityInfo.Parking.distops.Model;
+
+namespace CityInfo.Parking.distops;
 
 public interface IDistopService
 {

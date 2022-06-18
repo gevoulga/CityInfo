@@ -2,7 +2,7 @@
 using System.Reflection;
 using Castle.DynamicProxy;
 
-namespace CityInfo.Parking.distops;
+namespace CityInfo.Parking.distops.Model;
 
 public abstract class BaseDistopInterceptor : IInterceptor
 {
@@ -18,7 +18,7 @@ public abstract class BaseDistopInterceptor : IInterceptor
     public void Intercept(IInvocation invocation)
     {
         var watch = Stopwatch.StartNew();
-        _logger.LogInformation($"Before target call {invocation.Method.Name} with args: {invocation.Arguments}" );
+        _logger.LogInformation($"Starting distop '{invocation.Method.Name}' with args: '{invocation.Arguments}'" );
         try
         {
             var distopContext = ResolveDistopContext(invocation);
@@ -27,13 +27,13 @@ public abstract class BaseDistopInterceptor : IInterceptor
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, $"Target call threw exception");
+            _logger.LogWarning(ex, $"Distop threw exception");
             throw;
         }
         finally
         {
             watch.Stop();
-            _logger.LogInformation($"After target call {invocation.Method.Name}, elapsed {watch.Elapsed}");
+            _logger.LogInformation($"Finished distop '{invocation.Method.Name}', elapsed '{watch.Elapsed}'");
         }
     }
 

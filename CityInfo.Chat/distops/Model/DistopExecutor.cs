@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
 
-namespace CityInfo.Parking.distops;
+namespace CityInfo.Parking.distops.Model;
 
 public class DistopExecutor : IDistopExecutor
 {
