@@ -29,13 +29,25 @@ namespace CityInfo.Chat.Test
             // serviceCollection.AddSingleton<NLogLoggerFactory>();
             // serviceCollection.AddLogging();
 
+
+            var distopService = new ServiceBusDistopService(
+                "Endpoint=sb://gvoulgarakis.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=tOUMyVJSxazsYS3zyQeXCwppA0W7XeNNUMNA007Hf1k=",
+                "calendar.controlmessage");
             // The distops initialization
             serviceCollection
-                .AddDistopsService<InProcessDistopService>() // Add the processing of distops
+                // .AddDistopsService<InProcessDistopService>() // Add the processing of distops
+                .AddDistopsService((ss) => distopService)
                 .AddSingleton<IAsyncDistop, AsyncDistop>()
                 .AddSingleton<ISyncDistop, SyncDistop>()
                 .AddSingleton<IThrowsDistop, ThrowsDistop>()
                 .AddSingleton<IFireAndForgetDistop, FireAndForgetDistop>();
+
+            // "calendar.controlmessage": {
+            //     "MessageTtl": "00:10:00",
+            //     "MaxLockAutoRenewDuration": "00:01:00",
+            //     "SubscriptionPrefix": "notif-svc",
+            //     "MaxConcurrentCalls": 1
+            // },
 
             sp = serviceCollection.BuildServiceProvider();
         }

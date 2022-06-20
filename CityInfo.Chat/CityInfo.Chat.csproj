@@ -8,8 +8,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.8.1" />
       <PackageReference Include="Castle.Core" Version="5.0.0" />
       <PackageReference Include="Castle.Core.AsyncInterceptor" Version="2.1.0" />
+      <PackageReference Include="Microsoft.CorrelationVector" Version="1.0.42" />
       <PackageReference Include="NLog.Web.AspNetCore" Version="5.0.0" />
       <PackageReference Include="System.Linq.Async" Version="6.0.1" />
       <PackageReference Include="System.Reactive" Version="5.0.0" />
