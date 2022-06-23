@@ -1,6 +1,9 @@
 using System;
+using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
+using System.Threading.Tasks;
 
 namespace CityInfo.API.Utils
 {
@@ -30,6 +33,26 @@ namespace CityInfo.API.Utils
                 var switchedSubscription = source.Concat(switched).Subscribe(obs);
                 return new CompositeDisposable(switchedSubscription, source.Connect());
             });
+        }
+
+        public static IObservable<T> SubscribeAsync<T>(
+            this IObservable<T> source,
+            Func<T, Task> onNext,
+            Func<Exception, Task> onError,
+            Func<Task> onCompleted)
+        {
+            return source
+                .Select(e => Observable
+                    .Defer(() => onNext(e).ToObservable().Select(_ => e)))
+                .Concat()
+                .Catch<T, Exception>(ex =>
+                {
+                    var defer = onError(ex).ToObservable()
+                        .Select(unit => Observable.Throw<T>(ex))
+                        .Concat();
+                    return defer;
+                })
+                .Concat(Observable.FromAsync(onCompleted).SelectMany(_ => Observable.Empty<T>()));
         }
     }
 }
