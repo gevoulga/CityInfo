@@ -61,10 +61,15 @@ namespace CityInfo.API
 #endif
 
             //Connect to DB
-            services.AddDbContext<CityInfoContext>(builder =>
-            {
-                builder.UseSqlServer(Configuration["Database:ConnectionString"]);
-            });
+            services.AddCosmos<CityInfoContext>(
+                connectionString:
+                "AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
+                databaseName: "CosmosDb");
+            // services.AddDbContext<CityInfoContext>(builder =>
+            // {
+            //     builder.UseSqlServer(Configuration["Database:ConnectionString"]);
+            // });
+
             //Add the repository service
             services.AddScoped<ICityInfoRepository, CityInfoRepository>();
 

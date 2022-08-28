@@ -1,0 +1,64 @@
+﻿version: '3.7'
+
+networks:
+  default:
+    external: false
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.16.237.0/24"
+
+volumes:
+  cosmosdrive:
+
+services:
+#  app:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    init: true
+#    depends_on:
+#      - cosmosdb
+#    volumes:
+#      # Forwards the local Docker socket to the container.
+#      - /var/run/docker.sock:/var/run/docker-host.sock
+#      # Update this to wherever you want VS Code to mount the folder of your project
+#      - ..:/workspace:cached
+#      # Cache maven repo
+#      - ~/.m2:/root/.m2
+#
+#    # Overrides default command so things don't shut down after the process ends.
+#    entrypoint: /usr/local/share/docker-init.sh
+#    command: sleep infinity
+#    network_mode: service:cosmosdb
+#
+#    # Uncomment the next line to use a non-root user for all processes.
+#    # user: vscode
+
+#https://libertus.dev/posts/connect-to-cosmosbd-emulator-on-docker/part1
+  cosmosdb:
+    image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
+    mem_limit: 3G
+    cpu_count: 2
+    tty: true
+    environment:
+      AZURE_COSMOS_EMULATOR_PARTITION_COUNT: 6
+      AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE: "true"
+      #https://dev.to/natterstefan/docker-tip-how-to-get-host-s-ip-address-inside-a-docker-container-5anh
+      #This step is required when Direct mode setting is configured using Cosmos DB SDKs (.NET, Java).
+      #AZURE_COSMOS_EMULATOR_IP_ADDRESS_OVERRIDE: ${DOCKER_GATEWAY_HOST:-host.docker.internal}
+    ports:
+      - "8081:8081"
+      - "10251:10251"
+      - "10252:10252"
+      - "10253:10253"
+      - "10254:10254"
+    networks:
+      default:
+        ipv4_address: 172.16.237.246
+     #https://stackoverflow.com/questions/72466963/cosmosdb-emulator-linux-image-mount-volume
+    volumes:
+      - cosmosdrive:/tmp/cosmos/appdata
+#      - "C:/docker-volumes/CosmosDB.Emulator:/tmp/cosmos/appdata"
+#      # Forwards the local Docker socket to the container.
+#      #- /var/run/docker.sock:/var/run/docker-host.sock
